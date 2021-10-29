@@ -6,7 +6,7 @@
 
 aoclib is a collection of Ruby helpers for solving [Advent of Code](https://adventofcode.com) puzzles. I've had these hanging around in my personal collection. After reaching 300 stars I decided to clean them up and release as a gem.
 
-Philosophy - Unlike regular Ruby gems, most helpers are added to the global namespace or monkeypatched into standard Ruby classes. I prefer things this way when I'm trying to work quickly. Also, DRY is not important because it can make it harder to quickly figure out how the helpers work. This gem is only for Advent of Code! Don't write gems this way
+Philosophy - Unlike regular Ruby gems, most helpers are added to the global namespace or monkeypatched into standard Ruby classes. I prefer things this way when I'm trying to work quickly. Also, DRY is not important because it can make it harder to quickly figure out how the helpers work. This gem is only for Advent of Code! Don't write real gems this way.
 
 ### Highlights
 

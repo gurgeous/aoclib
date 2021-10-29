@@ -6,7 +6,7 @@
 
 aoclib is a collection of Ruby helpers for solving [Advent of Code](https://adventofcode.com) puzzles. I've had these hanging around in my personal collection. After reaching 300 stars I decided to clean them up and release as a gem.
 
-Philosophy - Unlike regular Ruby gems, most helpers are added to the global namespace or monkeypatched into standard Ruby classes. I prefer things this way when I'm trying to work quickly. Also, DRY is not important because it can make it harder to quickly figure out how the helpers work. This gem is only for Advent of Code! Don't write real gems this way.
+Philosophy - Unlike regular Ruby gems, most helpers are added to the global namespace or monkeypatched into standard Ruby classes. I prefer things this way when I'm trying to work quickly. Also, DRY is not important because it can make it harder to quickly figure out how the helpers work. This gem is only for Advent of Code. Please don't write actual gems this way.
 
 ### Highlights
 
@@ -34,7 +34,7 @@ Here are some of the more helpful extensions:
 - [Integer](https://github.com/gurgeous/aoclib/blob/main/lib/core_ext/integer.rb): prime mixins, digit access, reverse
 - [String](https://github.com/gurgeous/aoclib/blob/main/lib/core_ext/string.rb): extract all ints/floats, MD5
 
-## Quick Example
+## Grid Example
 
 ```ruby
 >> GRID =<<EOF.freeze
@@ -56,10 +56,8 @@ Here are some of the more helpful extensions:
 EOF
 
 >> grid = HardGrid.from_string(GRID)
-=> <HardGrid 15x16>
+>> grid.dump(header: true)
 
->> grid.print(header: true)
-==>
    0000000000111111
    0123456789012345
 00 ################ 00
@@ -81,7 +79,46 @@ EOF
    0000000000111111
 
 >> grid.shortest_path_length(grid.find('A'), grid.find('Z'))
-=> 27
+27
+```
+
+## Numpy-style Examples with Array
+
+```ruby
+# create a 3x3 array and fill with 0...9
+>> Array.arange(3, 3).dump
+
+012
+345
+678
+
+# rot array 90 degrees
+>> Array.arange(3, 3).rot90.dump
+
+258
+147
+036
+
+# "concatenate" two arrays
+>> Array.concatenate(Array.arange(3, 3), Array.zeros(3, 4), axis: 1).dump
+
+0120000
+3450000
+6780000
+
+# flip array horizontally (also see flipud for vertical)
+>> Array.arange(3, 3).fliplr.dump
+
+210
+543
+876
+
+# rotate cols (or rows with axis: 0, which is the default)
+>> Array.arange(3, 3).roll(1, axis: 1).dump
+
+201
+534
+867
 ```
 
 ## Changelog

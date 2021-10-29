@@ -4,209 +4,88 @@
 
 # aoclib
 
-aoclib is an aggressive disk cache built on top of [Faraday](https://lostisland.github.io/faraday/). It's primarily used for crawling, and will aggressively cache all requests including POSTs and transient errors.
+aoclib is a collection of Ruby helpers for solving [Advent of Code](https://adventofcode.com) puzzles. I've had these hanging around in my personal collection. After reaching 300 stars I decided to clean them up and release as a gem.
 
-## Installation
+Philosophy - Unlike regular Ruby gems, most helpers are added to the global namespace or monkeypatched into standard Ruby classes. I prefer things this way when I'm trying to work quickly. Also, DRY is not important because it can make it harder to quickly figure out how the helpers work. This gem is only for Advent of Code! Don't write gems this way
 
-```sh
-# install gem
-$ gem install aoclib
+### Highlights
 
-# or add to your Gemfile
-gem 'aoclib'
-```
+- [HardGrid](https://github.com/gurgeous/aoclib/blob/main/lib/hard_grid.rb) and [SoftGrid](https://github.com/gurgeous/aoclib/blob/main/lib/soft_grid.rb) classes for reading and walking maps, AOC style. "Hard" grids have well defined dimensions, like dungeons. "Soft" grids can grow over time, like game of life. These grids can be constructed from map strings and pretty printed. Internal storage is a hash.
 
-## Quick Start
+- [Point](https://github.com/gurgeous/aoclib/blob/main/lib/point.rb) and [Point3](https://github.com/gurgeous/aoclib/blob/main/lib/point3.rb) for following compass (N, E, S, W) and calculating neighbors.
 
-```ruby
-require 'aoclib'
+- [Deque](https://github.com/gurgeous/aoclib/blob/main/lib/deque.rb), like the one in Python. A doubly linked list. Operations at head and tail are fast, everything else is slow. Supports rotate. 200 elves are sitting around a table...
 
-# create a new Faraday client
-faraday = Faraday.new do
-  _1.use :aoclib
-end
+- [Numpy](https://github.com/gurgeous/aoclib/blob/main/lib/core_ext/numpy.rb)-style helpers for Array. You can reshape, rotate, flip, roll, concatenate, etc. Only works with 2d.
 
-response = faraday.get('https://google.com') # read from network
-response = faraday.get('https://google.com') # read from ~/aoclib/google.com/...
-```
+- [PriorityQueue](https://github.com/gurgeous/aoclib/blob/main/lib/priority_queue.rb) for [A* search](https://en.wikipedia.org/wiki/A*_search_algorithm).
 
-aoclib includes a handy command that works like `curl`:
+- [deep_dup](https://github.com/gurgeous/aoclib/blob/main/lib/core_ext/deep_dup.rb) for making copies of arrays, hashes, sets, etc.
 
-```sh
-# cache miss, read from network
-$ aoclib google.com
+Oh, and if your main Ruby file is named `17.rb` call `aocinput` to read the contents of `17.txt`.
 
-# cache hit, read from ~/aoclib/google.com/...
-$ aoclib google.com
+### Core Extensions
 
-# supports many curl flags
-$ aoclib -A test-agent --proxy localhost:8080 --output tmp.html twitter.com
-```
+Here are some of the more helpful extensions:
 
-## Faraday & aoclib
+- [Array](https://github.com/gurgeous/aoclib/blob/main/lib/core_ext/array.rb): Manhattan distance, neighbors (N, E, S, W)
+- [Enumerable](https://github.com/gurgeous/aoclib/blob/main/lib/core_ext/enumerable.rb): identical? and most_common
+- [Hash](https://github.com/gurgeous/aoclib/blob/main/lib/core_ext/hash.rb): Sort by key/value, or reverse
+- [Integer](https://github.com/gurgeous/aoclib/blob/main/lib/core_ext/integer.rb): prime mixins, digit access, reverse
+- [String](https://github.com/gurgeous/aoclib/blob/main/lib/core_ext/string.rb): extract all ints/floats, MD5
 
-[Faraday](https://lostisland.github.io/faraday/) is a popular Ruby HTTP client. Faraday uses a stack of middleware to process each request, similar to the way Rack works deep inside Rails or Sinatra. aoclib is Faraday middleware - it processes requests to look for cached responses on disk. Faraday's [usage page](https://lostisland.github.io/faraday/usage/) is a good place to learn more about Faraday.
-
-The simplest possible setup for aoclib looks like this:
+## Quick Example
 
 ```ruby
-faraday = Faraday.new do
-  _1.use :aoclib
-end
-faraday.get(...)
+>> GRID =<<EOF.freeze
+################
+#.....#.......A#
+#..####..#..####
+#........#..#..#
+##########..#..#
+#...........#..#
+#..#..####..#..#
+#..#.....#.....#
+#..##########..#
+#..#........#..#
+#..#..####..#..#
+#.....#.....#..#
+#..####..####..#
+#....Z#..#.....#
+################
+EOF
+
+>> grid = HardGrid.from_string(GRID)
+=> <HardGrid 15x16>
+
+>> grid.print(header: true)
+==>
+   0000000000111111
+   0123456789012345
+00 ################ 00
+01 #.....#.......A# 01
+02 #..####..#..#### 02
+03 #........#..#..# 03
+04 ##########..#..# 04
+05 #...........#..# 05
+06 #..#..####..#..# 06
+07 #..#.....#.....# 07
+08 #..##########..# 08
+09 #..#........#..# 09
+10 #..#..####..#..# 10
+11 #.....#.....#..# 11
+12 #..####..####..# 12
+13 #....Z#..#.....# 13
+14 ################ 14
+   0123456789012345
+   0000000000111111
+
+>> grid.shortest_path_length(grid.find('A'), grid.find('Z'))
+=> 27
 ```
-
-For serious crawling, you probably want a more robust middleware stack:
-
-```ruby
-faraday = Faraday.new do
-  _1.options.timeout = 10 # lower the timeout
-  _1.use :cookie_jar # cookie support
-  _1.request :url_encoded # auto-encode form bodies
-  _1.response :json # auto-decode JSON responses
-  _1.response :follow_redirects # follow redirects (should be above aoclib)
-  _1.use :aoclib
-  _1.request :retry # retry failed responses (should be below aoclib)
-end
-faraday.get(...)
-```
-
-You may want to experiment with the options for [:retry](https://lostisland.github.io/faraday/middleware/retry), to retry a
-broader set of transient errors. See [examples.rb](https://github.com/gurgeous/aoclib/blob/main/examples.rb) for more ideas.
-
-## Disk Cache
-
-aoclib calculates a canonical cache key for each request. The key consists of the http method, url, sorted query, and sorted body if possible. We use md5(key) as the path for each file in the cache. Try `aoclib --status` to see it in action:
-
-```sh
-$ aoclib --status "google.com?q=ruby"
-url: "http://google.com/?q=ruby"
-status: "miss"
-key: "GET http://google.com?q=ruby"
-digest: "0e37f96800a55958fa6029283c78f672"
-path: "aoclib/google.com/0e3/7f96800a55958fa6029283c78f672"
-```
-
-EVERY response will be cached on disk, including POSTs. By default, the cache will be placed at `~/aoclib` and cached responses never expire. Some examples:
-
-```ruby
-faraday.get("http://www.google.com", nil, { "User-Agent": "test-agent" })
-faraday.get("http://www.google.com", { "q": "ruby" })
-faraday.post("http://httpbin.org/post", "name=hello")
-```
-
-This will populate the cache:
-
-```sh
-$ cd ~/aoclib
-$ find . -type f
-./google.com/5eb/fc70198242876f5e83a67253663e9
-./google.com/6d0/52ac9a33d25065fc9f405100f3741
-./httpbin.org/88f/7b2bc35cc3759c9905c4de1dbf981
-
-$ gzcat google.com/5eb/fc70198242876f5e83a67253663e9
-# GET http://www.google.com
-aoclib 200 OK
-date: Mon, 19 Apr 2021 18:40:01 GMT
-expires: -1
-cache-control: private, max-age=0
-...
-```
-
-## Aggressive Caching
-
-aoclib caches all responses. POST responses are cached, along with 500 responses and other HTTP errors. HTTP response headers that typically control caching are completely ignored. We also cache many exceptions like connection refused, timeout, ssl error, etc. These are returned as responses with HTTP status code 999.
-
-In general, if you make a request it will be cached regardless of the outcome.
-
-## String Encoding
-
-aoclib will honor the `Content-Type` from responses. Unfortunately, it is entirely possible to get invalid bodies if the `Content-Type` doesn't match the bytes. This is a major bummer, so aoclib provides a `utf8:` option that forces text response bodies to UTF-8.
-
-## Configuration
-
-aoclib supports a few options:
-
-- `dir:` location for disk cache, defaults to `~/aoclib`
-- `expires:` when to expire cached requests, default is nil (never expire)
-- `force:` don't read anything from cache (but still write)
-- `force_errors:` don't read errors from cache (but still write)
-- `ignore_params:` array of query params to ignore when calculating cache_key
-- `logger`: log requests to stderr, or pass your own logger
-- `utf8`: if true, force text response bodies to valid UTF-8
-
-Pass these in when setting up Faraday:
-
-```ruby
-faraday = Faraday.new do
-  _1.use :aoclib, expires: 7*24*60*60, force: true
-end
-```
-
-## Command Line
-
-The `aoclib` command works like `curl` and supports some of curl's popular flags. Exit code 1 indicates an HTTP response code >= 400 or a failed request.
-
-```
-$ aoclib --help
-aoclib [options] [url]
-Similar to curl:
-    -d, --data        HTTP POST data
-    -H, --header      pass custom header(s) to server
-    -i, --include     include response headers in the output
-    -m, --max-time    maximum time allowed for the transfer
-    -o, --output      write to file instead of stdout
-    -x, --proxy       use host[:port] as proxy
-    -X, --request     HTTP method to use
-    --retry           retry request if problems occur
-    -s, --silent      silent mode (don't print errors)
-    -A, --user-agent  send User-Agent to server
-Specific to aoclib:
-    --dir             aoclib cache directory (defaults to ~/aoclib)
-    --expires         when to expire cached requests (ex: 1h, 2d, 3w)
-    --force           don't read anything from cache (but still write)
-    --force-errors    don't read errors from cache (but still write)
-    --status          show status for a url in the cache
-```
-
-## Goodies: aoclib-grep
-
-The `aoclib-grep` command makes it easy to search your cache directory. It can be challenging to use grep/ripgrep because cache files are compressed and JSON bodies often lack newlines. aoclib-grep is the right tool for the job. See `aoclib-grep --help`.
-
-An alternative is to use [ripgrep-all](https://github.com/phiresky/ripgrep-all) with the `--rga-accurate` flag. Ripgrep-all works well for large caches, though it lacks some of the niceties of `aoclib-grep`.
-
-## Limitations & Gotchas
-
-- Transient errors are cached. This is appropriate for many uses cases (like crawling) but can be confusing. Use `aoclib --status` to debug.
-- There are no builtin mechanisms to cleanup or limit the size of the cache. Use `rm`
-- For best results the `:follow_redirects` middleware should be listed _above_ aoclib. That way each redirect request will be cached.
-- For best results the `:retry` middleware should be listed _below_ aoclib. That way retries will complete before we cache.
-- aoclib does not work with Faraday's parallel mode or `on_complete`.
 
 ## Changelog
 
-#### 0.5
-
-- honor Content-Type
-- added `:utf8` option to force text-like response bodies to UTF-8
-
-#### 0.4
-
-- added aoclib-grep for searching cache files
-- added aoclib::Cache#delete
-- rename `:expires_in` to `:expires`
-
-#### 0.3
-
-- added :ignore_params, for ignoring query params when generating cache keys
-- HTTP 40x & 50x responses return :error status (and respond to `force_error`)
-
-#### 0.2 - May 2020
-
-- added `response.env[:aoclib]`, which will be true if the response came from the cache
-- added `:logger` option
-- rake rubocop
-
-#### 0.1 - April 2020
+#### 0.1 - Nov 2020
 
 - Original release

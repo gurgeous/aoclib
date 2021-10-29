@@ -86,6 +86,6 @@ EOF
 
 ## Changelog
 
-#### 0.1 - Nov 2020
+#### 0.1 - Nov 2021
 
 - Original release

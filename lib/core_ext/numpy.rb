@@ -59,31 +59,6 @@ class Array
     end
   end
 
-  # dump an array with optional headers
-  def dump(header: false)
-    return '<Array empty>' if empty?
-
-    d2!
-    rows, cols = (0...length), (0...first.length)
-    if rows.size > 1000 || cols.size > 1000
-      raise 'too large to dump'
-    end
-
-    if header
-      puts("   #{rows.map(&:tens).join}")
-      puts("   #{rows.map(&:ones).join}")
-    end
-
-    rows.each do |r|
-      s = []
-      s += [r.tens, r.ones, ' '] if header
-      s += cols.map { |c| self[r][c] }
-      puts(s.join)
-    end
-
-    nil
-  end
-
   # create 2d array filled with this value
   def self.full(rows, cols, value)
     Array.new(rows, value).map { Array.new(cols, value) }

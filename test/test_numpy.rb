@@ -32,8 +32,4 @@ class TestNumpy < MiniTest::Test
     assert_equal([[3, 4], [1, 2]], x.flipud)
     assert_equal([[2, 1], [4, 3]], x.fliplr)
   end
-
-  def test_dump
-    assert_output(/789/)  { Array.arange(2, 5).dump(header: true) }
-  end
 end

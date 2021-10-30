@@ -37,7 +37,7 @@ COMPASS = [
   [-1, 0], # W
 ].freeze
 
-# nw n ne e se s sw w ordinal directions
+# NW N NE E SE S SW W ordinal directions
 ORDINALS = [
   [-1, -1], # NW
   [0, -1], # N

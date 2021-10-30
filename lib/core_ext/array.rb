@@ -71,18 +71,18 @@ class Array
     [self[0] - 1, self[1]].freeze
   end
 
-  # directional aliases for nesw
+  # directional aliases for NESW
   alias up n
   alias right e
   alias down s
   alias left w
 
-  # nesw neighors
+  # NESW neighors
   def neighbors4
     [n, e, s, w]
   end
 
-  # nw n ne e se s sw w neighbors
+  # NW N NE E SE S SW W neighbors
   def neighbors8
     [].tap do |neighbors|
       (-1..1).each do |dx|

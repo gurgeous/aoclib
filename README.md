@@ -22,7 +22,7 @@ Philosophy - Unlike regular Ruby gems, most helpers are added to the global name
 
 - [deep_dup](https://github.com/gurgeous/aoclib/blob/main/lib/core_ext/deep_dup.rb) for making copies of arrays, hashes, sets, etc.
 
-Oh, and if your main Ruby file is named `17.rb` call `aocinput` to read the contents of `17.txt`.
+Oh, and if your main Ruby file is named `17.rb` call `aoc_input` to read the contents of `17.txt`.
 
 ### Core Extensions
 
@@ -124,6 +124,6 @@ EOF
 
 ## Changelog
 
-#### 0.1 - Nov 2021
+#### 0.0.1 - Nov 2021
 
 - Original release

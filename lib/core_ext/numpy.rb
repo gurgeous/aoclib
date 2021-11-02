@@ -11,7 +11,7 @@ class Array
   # verify points are in the right order and in range.
   def valid_range!(r1, c1, r2, c2)
     if !includes_pt?(r1, c1) || !includes_pt?(r2, c2) || r1 > r2 || c1 > c2
-      raise ArgumentError, "must be in bounds. 0 < #{r1} < #{r2} < #{first.length} and 0 < #{c1} < #{c2} < #{length}"
+      raise ArgumentError, "must be in bounds. 0 < #{r1} < #{r2} < #{length} and 0 < #{c1} < #{c2} < #{first.length}"
     end
   end
 

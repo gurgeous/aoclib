@@ -54,14 +54,14 @@ class TestNumpy < MiniTest::Test
 
   def test_add
     x = Array.zeros(3, 3)
-    x.add(0, 0, 1, 1, 2)
-    x.add(1, 1, 2, 2, -1)
+    x.inc(0, 0, 1, 1, 2)
+    x.inc(1, 1, 2, 2, -1)
     assert_equal(x, [[2, 2, 0], [2, 1, -1], [0, -1, -1]])
   end
 
-  def test_copy
+  def test_slice
     a = Array.arange(4, 4)
-    b = a.copy(1, 1, 2, 2)
+    b = a.slice(1, 1, 2, 2)
     assert_equal(b, [[5, 6], [9, 10]])
   end
 
@@ -74,8 +74,14 @@ class TestNumpy < MiniTest::Test
 
   def test_bounds_checks
     x = Array.zeros(4, 4)
-    assert_raises { x.invert(0, 0, 4, 4) }
-    assert_raises { x.invert(-1, 0, 1, 1) }
-    assert_raises { x.invert(2, 1, 1, 2) }
+    assert_raises ArgumentError do
+      x.not!(0, 0, 4, 4)
+    end
+    assert_raises ArgumentError do
+      x.not!(-1, 0, 1, 1)
+    end
+    assert_raises ArgumentError do
+      x.not!(2, 1, 1, 2)
+    end
   end
 end

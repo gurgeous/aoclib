@@ -9,14 +9,14 @@ class Array
   end
 
   # verify points are in the right order and in range.
-  def pts!(r1, c1, r2, c2)
-    if r1 < 0 || c1 < 0 || c2 >= self[0].length || r2 >= length
+  def valid_range!(r1, c1, r2, c2)
+    if !includes_pt?(r1, c1) || !includes_pt?(r2, c2) || r1 > r2 || c1 > c2
       raise ArgumentError, "must be in bounds. 0 < #{r1} < #{r2} < #{first.length} and 0 < #{c1} < #{c2} < #{length}"
     end
+  end
 
-    if r1 > r2 || c1 > c2
-      raise ArgumentError, 'first point must be before the second point'
-    end
+  def includes_pt?(r, c)
+    r >= 0 && c >= 0 && c < self[0].length && r < length
   end
 
   # add up all the values
@@ -77,7 +77,7 @@ class Array
 
   # set the passed value to all cells in the specified region
   def full(r1, c1, r2, c2, value)
-    pts!(r1, c1, r2, c2)
+    valid_range!(r1, c1, r2, c2)
     r1.upto(r2) { |r| c1.upto(c2) { |c| self[r][c] = value } }
 
     self
@@ -95,26 +95,26 @@ class Array
   end
 
   # add the passed difference to all values in the specified region
-  def add(r1, c1, r2, c2, difference)
-    pts!(r1, c1, r2, c2)
+  def inc(r1, c1, r2, c2, n = 1)
+    valid_range!(r1, c1, r2, c2)
 
-    r1.upto(r2) { |r| c1.upto(c2) { |c| self[r][c] += difference } }
+    r1.upto(r2) { |r| c1.upto(c2) { |c| self[r][c] += n } }
 
     self
   end
 
   # create new array from specified region
-  def copy(r1, c1, r2, c2)
-    pts!(r1, c1, r2, c2)
+  def slice(r1, c1, r2, c2)
+    valid_range!(r1, c1, r2, c2)
 
-    Array.new(r2 - r1 + 1).map { Array.new(c2 - c1 + 1) }.tap do |new_array|
+    Array.zeros(r2 - r1 + 1, c2 - c1 + 1).tap do |new_array|
       r1.upto(r2) { |r| c1.upto(c2) { |c| new_array[r - r1][c - c1] = self[r][c] } }
     end
   end
 
   # invert values in the specified region (true => false, false => true, nonzero => 0, and 0 => 1)
   def not!(r1, c1, r2, c2)
-    pts!(r1, c1, r2, c2)
+    valid_range!(r1, c1, r2, c2)
 
     r1.upto(r2) do |r|
       c1.upto(c2) do |c|
@@ -122,7 +122,8 @@ class Array
         when true then false
         when false then true
         when 0 then 1
-        else 0
+        when 1 then 0
+        else raise ArgumentError, 'Contents must be true, false, 0, or 1'
         end
       end
     end

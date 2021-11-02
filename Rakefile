@@ -15,7 +15,11 @@ task default: :test
 
 # Watch rb files, run tests whenever something changes
 task :watch do
-  sh "find . -name '*.rb' | entr -c rake"
+  if !system("which watchexec > /dev/null 2>&1")
+    puts 'use "brew install watchexec" or similar to use rake watch'
+    exit 1
+  end
+  sh "watchexec -c -e rb rake"
 end
 
 #

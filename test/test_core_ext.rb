@@ -31,7 +31,7 @@ class TestCoreExt < Minitest::Test
     assert_equal(4, [1, 2, 3].man([3, 2, 1]))
 
     # dump
-    assert_output(/7, 8, 9/)  { Array.arange(2, 5).dump }
+    assert_output(/7, 8, 9/) { Array.arange(2, 5).dump }
   end
 
   def test_enumerable

@@ -18,8 +18,6 @@ class TestCoreExt < Minitest::Test
     assert_equal([-1, 0], [0, 0].w)
     assert_equal(4, [0, 0].neighbors4.length)
     assert_equal(8, [0, 0].neighbors8.length)
-    assert_equal([3, -2], [2, 3].turnl)
-    assert_equal([-3, 2], [2, 3].turnr)
 
     # index_subarray
     assert_equal(1, [1, 2, 3, 4].index_subarray([2, 3]))
@@ -31,7 +29,7 @@ class TestCoreExt < Minitest::Test
     assert_equal(4, [1, 2, 3].man([3, 2, 1]))
 
     # dump
-    assert_output(/7, 8, 9/) { Array.arange(2, 5).dump }
+    assert_output(/7, 8, 9/) { Array.arange_2d(2, 5).dump }
   end
 
   def test_enumerable

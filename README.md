@@ -86,35 +86,35 @@ EOF
 
 ```ruby
 # create a 3x3 array and fill with 0...9
->> Array.arange(3, 3).dump
+>> Array.arange_2d(3, 3).dump
 
 [[0, 1, 2],
  [3, 4, 5],
  [6, 7, 8]]
 
 # rotate entire array 90 degrees CCW
->> Array.arange(3, 3).rot90.dump
+>> Array.arange_2d(3, 3).rot90_2d.dump
 
 [[2, 5, 8],
  [1, 4, 7],
  [0, 3, 6]]
 
 # "concatenate" two arrays
->> Array.concatenate(Array.arange(3, 3), Array.zeros(3, 4), axis: 1).dump
+>> Array.concatenate_2d(Array.arange_2d(3, 3), Array.zeros_2d(3, 4), axis: 1).dump
 
 [[0, 1, 2, 0, 0, 0, 0],
  [3, 4, 5, 0, 0, 0, 0],
  [6, 7, 8, 0, 0, 0, 0]]
 
 # flip array horizontally (also see flipud for vertical)
->> Array.arange(3, 3).fliplr.dump
+>> Array.arange_2d(3, 3).fliplr_2d.dump
 
 [[2, 1, 0],
  [5, 4, 3],
  [8, 7, 6]]
 
 # rotate cols (or rows with axis: 0, which is the default)
->> Array.arange(3, 3).roll(1, axis: 1).dump
+>> Array.arange_2d(3, 3).roll_2d(1, axis: 1).dump
 
 [[2, 0, 1],
  [5, 3, 4],

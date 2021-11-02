@@ -3,54 +3,56 @@
 #
 
 class Array
-  # raise if not 2d
-  def d2!
-    raise 'not a 2d array' if !first.is_a?(Array)
+  #
+  # accessors
+  #
+
+  # what is the shape of this 2d array?
+  def shape
+    [rows, cols]
   end
 
-  # verify points are in the right order and in range.
-  def valid_range!(r1, c1, r2, c2)
-    if !includes_pt?(r1, c1) || !includes_pt?(r2, c2) || r1 > r2 || c1 > c2
-      raise ArgumentError, "must be in bounds. 0 < #{r1} < #{r2} < #{length} and 0 < #{c1} < #{c2} < #{first.length}"
-    end
+  # how many rows in this 2d array
+  def rows
+    length
   end
 
-  def includes_pt?(r, c)
-    r >= 0 && c >= 0 && c < self[0].length && r < length
+  # how many cols in this 2d array
+  def cols
+    first.length
   end
 
-  # add up all the values
+  #
+  # numpy
+  #
+
+  # add up all the values in this 2d array
   def sum_2d
+    must_be_2d!
     sum(&:sum)
   end
 
-  # what is the shape?
-  def shape
-    d2!
-    [length, first.length]
-  end
-
   # rotate left (CCW)
-  def rot90
-    d2!
+  def rot90_2d
+    must_be_2d!
     transpose.reverse
   end
 
   # flip rows
-  def flipud
-    d2!
+  def flipud_2d
+    must_be_2d!
     reverse
   end
 
   # flip cols
-  def fliplr
-    d2!
+  def fliplr_2d
+    must_be_2d!
     map(&:reverse)
   end
 
   # return array with new shape
-  def reshape(rows, cols)
-    d2!
+  def reshape_2d(rows, cols)
+    must_be_2d!
     values = flatten
     if values.length != rows * cols
       raise "invalid reshape (#{values.length} != #{rows}*#{cols}"
@@ -60,8 +62,8 @@ class Array
   end
 
   # roll (rotate) rows or cols to the right
-  def roll(shift, axis: 0)
-    d2!
+  def roll_2d(shift, axis: 0)
+    must_be_2d!
     if axis != 0 && axis != 1
       raise ArgumentError, 'axis must be 0 or 1'
     end
@@ -75,49 +77,57 @@ class Array
     end
   end
 
-  # set the passed value to all cells in the specified region
-  def fill(r1, c1, r2, c2, value)
-    valid_range!(r1, c1, r2, c2)
-    r1.upto(r2) { |r| c1.upto(c2) { |c| self[r][c] = value } }
+  # set the value to all cells in the region
+  def fill_2d!(r1, c1, r2, c2, value)
+    must_be_2d!
+    includes_range!(r1, c1, r2, c2)
 
-    self
-  end
-
-  # set the cells starting at the specified coordinates with the contents of the passed array
-  def paste(r, c, other)
-    if r < 0 || c < 0 || c + other.first.length >= first.length || r + other.length >= length
-      raise ArgumentError, 'must be in bounds'
-    end
-
-    other.each_with_index { |row, r2| row.each_index { |c2| self[r2 + r][c2 + c] = other[r2][c2] } }
-
-    self
-  end
-
-  # add the passed difference to all values in the specified region
-  def inc(r1, c1, r2, c2, n = 1)
-    valid_range!(r1, c1, r2, c2)
-
-    r1.upto(r2) { |r| c1.upto(c2) { |c| self[r][c] += n } }
-
-    self
-  end
-
-  # create new array from specified region
-  def slice(r1, c1, r2, c2)
-    valid_range!(r1, c1, r2, c2)
-
-    Array.zeros(r2 - r1 + 1, c2 - c1 + 1).tap do |new_array|
-      r1.upto(r2) { |r| c1.upto(c2) { |c| new_array[r - r1][c - c1] = self[r][c] } }
+    tap do
+      (r1..r2).each do |r|
+        (c1..c2).each do |c|
+          self[r][c] = value
+        end
+      end
     end
   end
 
-  # invert values in the specified region (true => false, false => true, nonzero => 0, and 0 => 1)
-  def not!(r1, c1, r2, c2)
-    valid_range!(r1, c1, r2, c2)
+  # set the cells starting at r, c with the contents of the other 2d array
+  def paste_2d!(r, c, other)
+    must_be_2d!
+    if r < 0 || r + other.rows >= rows || c < 0 || c + other.cols >= cols
+      raise ArgumentError, 'out of bounds'
+    end
 
-    r1.upto(r2) do |r|
-      c1.upto(c2) do |c|
+    tap do
+      other.each.with_index do |row, r2|
+        row.each_index do |c2|
+          self[r2 + r][c2 + c] = other[r2][c2]
+        end
+      end
+    end
+  end
+
+  # add n to all values in a region
+  def inc_2d!(r1, c1, r2, c2, n = 1)
+    must_be_2d!
+    includes_range!(r1, c1, r2, c2)
+
+    tap do
+      (r1..r2).each do |r|
+        (c1..c2).each do |c|
+          self[r][c] += n
+        end
+      end
+    end
+  end
+
+  # invert values in the region (true => false, false => true, nonzero => 0, and 0 => 1)
+  def not_2d!(r1, c1, r2, c2)
+    must_be_2d!
+    includes_range!(r1, c1, r2, c2)
+
+    (r1..r2).each do |r|
+      (c1..c2).each do |c|
         self[r][c] = case self[r][c]
         when true then false
         when false then true
@@ -129,19 +139,76 @@ class Array
     end
   end
 
+  # create new array from region
+  def slice_2d(r1, c1, r2, c2)
+    must_be_2d!
+    includes_range!(r1, c1, r2, c2)
+
+    Array.zeros_2d(r2 - r1 + 1, c2 - c1 + 1).tap do |new_array|
+      r1.upto(r2) do |r|
+        c1.upto(c2) do |c|
+          new_array[r - r1][c - c1] = self[r][c]
+        end
+      end
+    end
+  end
+
+  # dump a 2d array
+  def dump
+    must_be_2d!
+
+    widths = transpose.map { |col| col.map { _1.inspect.length }.max }
+    each.with_index do |row, ii|
+      s = []
+      s << (ii == 0 ? '[[' : ' [')
+      row.each.with_index do
+        s << _1.inspect.rjust(widths[_2])
+        s << ', ' if _2 != row.length - 1
+      end
+      s << (ii == length - 1 ? ']]' : '],')
+      puts(s.join)
+    end
+    nil
+  end
+
+  #
+  # sanity checks
+  #
+
+  # raise if not 2d
+  def must_be_2d!
+    raise 'not a 2d array' if !first.is_a?(Array)
+  end
+
+  # is this point in the array?
+  def includes_pt?(r, c)
+    r >= 0 && r < rows && c >= 0 && c < cols
+  end
+
+  # verify points are in the right order and in range.
+  def includes_range!(r1, c1, r2, c2)
+    if !includes_pt?(r1, c1) || !includes_pt?(r2, c2) || r1 > r2 || c1 > c2
+      raise ArgumentError, "out of bounds, 0 < #{r1} < #{r2} < #{rows} and 0 < #{c1} < #{c2} < #{cols}"
+    end
+  end
+
+  #
+  # ctors
+  #
+
   # create 2d array filled with this value
-  def self.full(rows, cols, value)
+  def self.full_2d(rows, cols, value)
     Array.new(rows, value).map { Array.new(cols, value) }
   end
 
   # create 2d array filled with zeros
-  def self.zeros(rows, cols)
-    full(rows, cols, 0)
+  def self.zeros_2d(rows, cols)
+    full_2d(rows, cols, 0)
   end
 
   # create 2d array filled with sequence (range)
-  def self.arange(rows, cols)
-    zeros(rows, cols).tap do |x|
+  def self.arange_2d(rows, cols)
+    zeros_2d(rows, cols).tap do |x|
       (0...rows).each do |r|
         (0...cols).each do |c|
           x[r][c] = r * cols + c
@@ -151,7 +218,7 @@ class Array
   end
 
   # concat two arrays
-  def self.concatenate(x, y, axis: 0)
+  def self.concatenate_2d(x, y, axis: 0)
     xs, ys = x.shape, y.shape
     if axis != 0 && axis != 1
       raise ArgumentError, 'axis must be 0 or 1'

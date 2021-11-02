@@ -8,6 +8,20 @@ class Array
     raise 'not a 2d array' if !first.is_a?(Array)
   end
 
+  def pts!(x1, y1, x2, y2)
+    if x1 < 0 || y1 < 0 || x2 >= self[0].length || y2 >= length
+      raise ArgumentError, "must be in bounds. 0 < #{x1} < #{x2} < #{first.length} and 0 < #{y1} < #{y2} < #{length}"
+    end
+
+    if x1 > x2 || y1 > y2
+      raise ArgumentError, 'first point must be before the second point'
+    end
+  end
+
+  def sum_all
+    sum { |row| row.sum }
+  end
+
   # what is the shape?
   def shape
     d2!
@@ -57,6 +71,44 @@ class Array
       # rotate cols each row
       map { _1.rotate(-shift) }
     end
+  end
+
+  def assign(x1, y1, x2, y2, value)
+
+    x1.upto(x2) { |x| y1.upto(y2) { |y| self[y][x] = value } }
+
+    self
+  end
+
+  def paste(x, y, other)
+    raise ArgumentError, 'must be in bounds' if x < 0 || y < 0 || x + other.first.length >= first.length || y + other.length >= length
+
+    other.each.with_index { |row, y2| row.each.with_index { |_val, x2| self[y2 + y][x2 + x] = other[y2][x2] } }
+
+    self
+  end
+
+  def adjust(x1, y1, x2, y2, difference)
+    pts!(x1, y1, x2, y2)
+
+    x1.upto(x2) { |x| y1.upto(y2) { |y| self[y][x] += difference } }
+
+    self
+  end
+
+  def clip(x1, y1, x2, y2)
+    pts!(x1, y1, x2, y2)
+
+    new_array = Array.new(y2 - y1 + 1).map { Array.new(x2 - x1 + 1) }
+    x1.upto(x2) { |x| y1.upto(y2) { |y| new_array[y - y1][x - x1] = self[y][x] } }
+
+    new_array
+  end
+
+  def invert(x1, y1, x2, y2)
+    pts!(x1, y1, x2, y2)
+
+    x1.upto(x2) { |x| y1.upto(y2) { |y| self[y][x] = self[y][x] == 0 ? 1 : 0 } }
   end
 
   # create 2d array filled with this value

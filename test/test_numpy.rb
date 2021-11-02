@@ -40,15 +40,15 @@ class TestNumpy < MiniTest::Test
     assert_equal(x, [[2, 2, 2, 2], [2, 5, 5, 2], [2, 5, 5, 2], [2, 2, 2, 2]])
   end
 
-  def test_not_2d!
+  def test_toggle_2d!
     x = Array.zeros_2d(4, 4)
-    x.not_2d!(0, 0, 2, 2)
-    x.not_2d!(1, 1, 3, 3)
+    x.toggle_2d!(0, 0, 2, 2)
+    x.toggle_2d!(1, 1, 3, 3)
     assert_equal(x, [[1, 1, 1, 0], [1, 0, 0, 1], [1, 0, 0, 1], [0, 1, 1, 1]])
 
     x = Array.full_2d(4, 4, false)
-    x.not_2d!(0, 0, 2, 2)
-    x.not_2d!(1, 1, 3, 3)
+    x.toggle_2d!(0, 0, 2, 2)
+    x.toggle_2d!(1, 1, 3, 3)
     assert_equal(x, [[true, true, true, false], [true, false, false, true], [true, false, false, true], [false, true, true, true]])
   end
 
@@ -59,29 +59,29 @@ class TestNumpy < MiniTest::Test
     assert_equal(x, [[2, 2, 0], [2, 1, -1], [0, -1, -1]])
   end
 
-  def test_slice_2d
+  def test_get_2d
     a = Array.arange_2d(4, 4)
-    b = a.slice_2d(1, 1, 2, 2)
+    b = a.get_2d(1, 1, 2, 2)
     assert_equal(b, [[5, 6], [9, 10]])
   end
 
-  def test_paste_2d!
+  def test_set_2d!
     x = Array.zeros_2d(4, 4)
     y = [[4, 5], [6, 7]]
-    x.paste_2d!(1, 1, y)
+    x.set_2d!(1, 1, y)
     assert_equal(x, [[0, 0, 0, 0], [0, 4, 5, 0], [0, 6, 7, 0], [0, 0, 0, 0]])
   end
 
   def test_bounds_checks
     x = Array.zeros_2d(4, 4)
     assert_raises ArgumentError do
-      x.not_2d!(0, 0, 4, 4)
+      x.toggle_2d!(0, 0, 4, 4)
     end
     assert_raises ArgumentError do
-      x.not_2d!(-1, 0, 1, 1)
+      x.toggle_2d!(-1, 0, 1, 1)
     end
     assert_raises ArgumentError do
-      x.not_2d!(2, 1, 1, 2)
+      x.toggle_2d!(2, 1, 1, 2)
     end
   end
 end

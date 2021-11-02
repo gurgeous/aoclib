@@ -78,21 +78,28 @@ class Array
   end
 
   #
-  # modifiers (alter array in place)
+  # region methods (always INCLUSIVE for r2/c2)
   #
 
-  # set region to value
-  def fill_2d!(r1, c1, r2, c2, value)
-    tap do
-      each_region_2d(r1, c1, r2, c2) { self[_1][_2] = value }
+  # create new array from region
+  def get_2d(r1, c1, r2, c2)
+    Array.zeros_2d(r2 - r1 + 1, c2 - c1 + 1).tap do |new_array|
+      each_region_2d(r1, c1, r2, c2) { new_array[_1 - r1][_2 - c1] = self[_1][_2] }
     end
   end
 
-  # set region to other 2d array
-  def paste_2d!(r, c, other)
+  # set region from another array
+  def set_2d!(r, c, other)
     tap do
       r1, c1, r2, c2 = r, c, r + other.rows - 1, c + other.cols - 1
       each_region_2d(r1, c1, r2, c2) { self[_1][_2] = other[_1 - r1][_2 - c1] }
+    end
+  end
+
+  # fill region with value
+  def fill_2d!(r1, c1, r2, c2, value)
+    tap do
+      each_region_2d(r1, c1, r2, c2) { self[_1][_2] = value }
     end
   end
 
@@ -103,8 +110,8 @@ class Array
     end
   end
 
-  # invert values in region (true => false, false => true, nonzero => 0, and 0 => 1)
-  def not_2d!(r1, c1, r2, c2)
+  # toggle values in region (true => false, false => true, nonzero => 0, and 0 => 1)
+  def toggle_2d!(r1, c1, r2, c2)
     tap do
       each_region_2d(r1, c1, r2, c2) do
         self[_1][_2] = case self[_1][_2]
@@ -112,7 +119,7 @@ class Array
         when false then true
         when 0 then 1
         when 1 then 0
-        else raise ArgumentError, 'Contents must be true, false, 0, or 1'
+        else raise ArgumentError, "can't toggle self[{#{_1}}][{#{_2}}] = #{self[_1][_2].inspect}"
         end
       end
     end
@@ -121,13 +128,6 @@ class Array
   #
   # other helpers
   #
-
-  # create new array from region
-  def slice_2d(r1, c1, r2, c2)
-    Array.zeros_2d(r2 - r1 + 1, c2 - c1 + 1).tap do |new_array|
-      each_region_2d(r1, c1, r2, c2) { new_array[_1 - r1][_2 - c1] = self[_1][_2] }
-    end
-  end
 
   # helper for iterating a region
   def each_region_2d(r1, c1, r2, c2, &block)

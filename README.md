@@ -120,6 +120,26 @@ EOF
  [5, 3, 4],
  [8, 6, 7]]
 
+# toggle a range of cells
+>> Array.zeros_2d(3, 3).toggle_2d!(0, 0, 1, 1).toggle_2d!(1, 1, 2, 2).dump
+
+[[1, 1, 0],
+ [1, 0, 1],
+ [0, 1, 1]]
+
+# get a region
+>> Array.arange_2d(3, 3).get_2d(1, 1, 3, 3).dump
+
+[[4, 5],
+ [7, 8]]
+
+# set a region using another 2d array
+>> Array.zeros_2d(3, 3).set_2d!(1, 1, Array.full_2d(2, 2, 9)).dump
+
+[[0, 0, 0],
+ [0, 9, 9],
+ [0, 9, 9]]
+
 ```
 
 ## Changelog

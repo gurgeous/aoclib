@@ -8,18 +8,20 @@ class Array
     raise 'not a 2d array' if !first.is_a?(Array)
   end
 
-  def pts!(x1, y1, x2, y2)
-    if x1 < 0 || y1 < 0 || x2 >= self[0].length || y2 >= length
-      raise ArgumentError, "must be in bounds. 0 < #{x1} < #{x2} < #{first.length} and 0 < #{y1} < #{y2} < #{length}"
+  # verify points are in the right order and in range.
+  def pts!(r1, c1, r2, c2)
+    if r1 < 0 || c1 < 0 || c2 >= self[0].length || r2 >= length
+      raise ArgumentError, "must be in bounds. 0 < #{r1} < #{r2} < #{first.length} and 0 < #{c1} < #{c2} < #{length}"
     end
 
-    if x1 > x2 || y1 > y2
+    if r1 > r2 || c1 > c2
       raise ArgumentError, 'first point must be before the second point'
     end
   end
 
-  def sum_all
-    sum { |row| row.sum }
+  # add up all the values
+  def sum_2d
+    sum(&:sum)
   end
 
   # what is the shape?
@@ -73,42 +75,57 @@ class Array
     end
   end
 
-  def assign(x1, y1, x2, y2, value)
-
-    x1.upto(x2) { |x| y1.upto(y2) { |y| self[y][x] = value } }
-
-    self
-  end
-
-  def paste(x, y, other)
-    raise ArgumentError, 'must be in bounds' if x < 0 || y < 0 || x + other.first.length >= first.length || y + other.length >= length
-
-    other.each.with_index { |row, y2| row.each.with_index { |_val, x2| self[y2 + y][x2 + x] = other[y2][x2] } }
+  # set the passed value to all cells in the specified region
+  def full(r1, c1, r2, c2, value)
+    pts!(r1, c1, r2, c2)
+    r1.upto(r2) { |r| c1.upto(c2) { |c| self[r][c] = value } }
 
     self
   end
 
-  def adjust(x1, y1, x2, y2, difference)
-    pts!(x1, y1, x2, y2)
+  # set the cells starting at the specified coordinates with the contents of the passed array
+  def paste(r, c, other)
+    if r < 0 || c < 0 || c + other.first.length >= first.length || r + other.length >= length
+      raise ArgumentError, 'must be in bounds'
+    end
 
-    x1.upto(x2) { |x| y1.upto(y2) { |y| self[y][x] += difference } }
+    other.each_with_index { |row, r2| row.each_index { |c2| self[r2 + r][c2 + c] = other[r2][c2] } }
 
     self
   end
 
-  def clip(x1, y1, x2, y2)
-    pts!(x1, y1, x2, y2)
+  # add the passed difference to all values in the specified region
+  def add(r1, c1, r2, c2, difference)
+    pts!(r1, c1, r2, c2)
 
-    new_array = Array.new(y2 - y1 + 1).map { Array.new(x2 - x1 + 1) }
-    x1.upto(x2) { |x| y1.upto(y2) { |y| new_array[y - y1][x - x1] = self[y][x] } }
+    r1.upto(r2) { |r| c1.upto(c2) { |c| self[r][c] += difference } }
 
-    new_array
+    self
   end
 
-  def invert(x1, y1, x2, y2)
-    pts!(x1, y1, x2, y2)
+  # create new array from specified region
+  def copy(r1, c1, r2, c2)
+    pts!(r1, c1, r2, c2)
 
-    x1.upto(x2) { |x| y1.upto(y2) { |y| self[y][x] = self[y][x] == 0 ? 1 : 0 } }
+    Array.new(r2 - r1 + 1).map { Array.new(c2 - c1 + 1) }.tap do |new_array|
+      r1.upto(r2) { |r| c1.upto(c2) { |c| new_array[r - r1][c - c1] = self[r][c] } }
+    end
+  end
+
+  # invert values in the specified region (true => false, false => true, nonzero => 0, and 0 => 1)
+  def not!(r1, c1, r2, c2)
+    pts!(r1, c1, r2, c2)
+
+    r1.upto(r2) do |r|
+      c1.upto(c2) do |c|
+        self[r][c] = case self[r][c]
+        when true then false
+        when false then true
+        when 0 then 1
+        else 0
+        end
+      end
+    end
   end
 
   # create 2d array filled with this value

@@ -33,31 +33,36 @@ class TestNumpy < MiniTest::Test
     assert_equal([[2, 1], [4, 3]], x.fliplr)
   end
 
-  def test_assign
+  def test_full
     x = Array.zeros(4, 4)
-    x.assign(0, 0, 3, 3, 2)
-    x.assign(1, 1, 2, 2, 5)
+    x.full(0, 0, 3, 3, 2)
+    x.full(1, 1, 2, 2, 5)
     assert_equal(x, [[2, 2, 2, 2], [2, 5, 5, 2], [2, 5, 5, 2], [2, 2, 2, 2]])
   end
 
-  def test_invert
+  def test_not
     x = Array.zeros(4, 4)
-    x.invert(0, 0, 2, 2)
-    x.invert(1, 1, 3, 3)
+    x.not!(0, 0, 2, 2)
+    x.not!(1, 1, 3, 3)
     assert_equal(x, [[1, 1, 1, 0], [1, 0, 0, 1], [1, 0, 0, 1], [0, 1, 1, 1]])
+
+    x = Array.full(4, 4, false)
+    x.not!(0, 0, 2, 2)
+    x.not!(1, 1, 3, 3)
+    assert_equal(x, [[true, true, true, false], [true, false, false, true], [true, false, false, true], [false, true, true, true]])
   end
 
-  def test_adjust
+  def test_add
     x = Array.zeros(3, 3)
-    x.adjust(0, 0, 1, 1, 2)
-    x.adjust(1, 1, 2, 2, -1)
+    x.add(0, 0, 1, 1, 2)
+    x.add(1, 1, 2, 2, -1)
     assert_equal(x, [[2, 2, 0], [2, 1, -1], [0, -1, -1]])
   end
 
-  def test_clip
-    x = Array.arange(4, 4)
-    y = x.clip(1, 1, 2, 2)
-    assert_equal(y, [[5, 6], [9, 10]])
+  def test_copy
+    a = Array.arange(4, 4)
+    b = a.copy(1, 1, 2, 2)
+    assert_equal(b, [[5, 6], [9, 10]])
   end
 
   def test_paste

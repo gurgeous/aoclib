@@ -112,12 +112,12 @@ class Array
     widths = transpose.map { |col| col.map { _1.inspect.length }.max }
     each.with_index do |row, ii|
       s = []
-      s << ((ii == 0) ? "[[" : " [")
+      s << (ii == 0 ? '[[' : ' [')
       row.each.with_index do
         s << _1.inspect.rjust(widths[_2])
         s << ', ' if _2 != row.length - 1
       end
-      s << ((ii == length - 1) ? "]]" : "],")
+      s << (ii == length - 1 ? ']]' : '],')
       puts(s.join)
     end
     nil

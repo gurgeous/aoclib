@@ -42,7 +42,7 @@ class HardGrid
   end
 
   # how big are we?
-  def size
+  def shape
     [rows, cols]
   end
 

@@ -4,7 +4,7 @@ class TestSoftGrid < MiniTest::Test
   def test_all
     str = "\nabcd\n1234\n"
     g = SoftGrid.from_string(str)
-    assert_equal([2, 4], g.size)
+    assert_equal([2, 4], g.shape)
     assert_equal([%w[a b c d], %w[1 2 3 4]], g.to_a)
 
     g = SoftGrid.new(10, 8, default: '.')

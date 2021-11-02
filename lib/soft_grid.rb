@@ -52,7 +52,7 @@ class SoftGrid
   end
 
   # what is the size of this grid? calculated fresh each time
-  def size
+  def shape
     [rows, cols]
   end
 

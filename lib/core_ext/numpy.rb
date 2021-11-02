@@ -23,7 +23,7 @@ class Array
   end
 
   #
-  # numpy
+  # numpy - these methods return new arrays
   #
 
   # add up all the values in this 2d array
@@ -77,58 +77,37 @@ class Array
     end
   end
 
-  # set the value to all cells in the region
+  #
+  # modifiers (alter array in place)
+  #
+
+  # set region to value
   def fill_2d!(r1, c1, r2, c2, value)
-    must_be_2d!
-    includes_range!(r1, c1, r2, c2)
-
     tap do
-      (r1..r2).each do |r|
-        (c1..c2).each do |c|
-          self[r][c] = value
-        end
-      end
+      each_region_2d(r1, c1, r2, c2) { self[_1][_2] = value }
     end
   end
 
-  # set the cells starting at r, c with the contents of the other 2d array
+  # set region to other 2d array
   def paste_2d!(r, c, other)
-    must_be_2d!
-    if r < 0 || r + other.rows >= rows || c < 0 || c + other.cols >= cols
-      raise ArgumentError, 'out of bounds'
-    end
-
     tap do
-      other.each.with_index do |row, r2|
-        row.each_index do |c2|
-          self[r2 + r][c2 + c] = other[r2][c2]
-        end
-      end
+      r1, c1, r2, c2 = r, c, r + other.rows - 1, c + other.cols - 1
+      each_region_2d(r1, c1, r2, c2) { self[_1][_2] = other[_1 - r1][_2 - c1] }
     end
   end
 
-  # add n to all values in a region
+  # add n to region
   def inc_2d!(r1, c1, r2, c2, n = 1)
-    must_be_2d!
-    includes_range!(r1, c1, r2, c2)
-
     tap do
-      (r1..r2).each do |r|
-        (c1..c2).each do |c|
-          self[r][c] += n
-        end
-      end
+      each_region_2d(r1, c1, r2, c2) { self[_1][_2] += n }
     end
   end
 
-  # invert values in the region (true => false, false => true, nonzero => 0, and 0 => 1)
+  # invert values in region (true => false, false => true, nonzero => 0, and 0 => 1)
   def not_2d!(r1, c1, r2, c2)
-    must_be_2d!
-    includes_range!(r1, c1, r2, c2)
-
-    (r1..r2).each do |r|
-      (c1..c2).each do |c|
-        self[r][c] = case self[r][c]
+    tap do
+      each_region_2d(r1, c1, r2, c2) do
+        self[_1][_2] = case self[_1][_2]
         when true then false
         when false then true
         when 0 then 1
@@ -139,21 +118,33 @@ class Array
     end
   end
 
+  #
+  # other helpers
+  #
+
   # create new array from region
   def slice_2d(r1, c1, r2, c2)
-    must_be_2d!
-    includes_range!(r1, c1, r2, c2)
-
     Array.zeros_2d(r2 - r1 + 1, c2 - c1 + 1).tap do |new_array|
-      r1.upto(r2) do |r|
-        c1.upto(c2) do |c|
-          new_array[r - r1][c - c1] = self[r][c]
-        end
+      each_region_2d(r1, c1, r2, c2) { new_array[_1 - r1][_2 - c1] = self[_1][_2] }
+    end
+  end
+
+  # helper for iterating a region
+  def each_region_2d(r1, c1, r2, c2, &block)
+    must_be_2d!
+
+    if !includes_2d?(r1, c1) || !includes_2d?(r2, c2) || r1 > r2 || c1 > c2
+      raise ArgumentError, "out of bounds, 0 < #{r1} < #{r2} < #{rows} and 0 < #{c1} < #{c2} < #{cols}"
+    end
+
+    (r1..r2).each do |r|
+      (c1..c2).each do |c|
+        block.call(r, c)
       end
     end
   end
 
-  # dump a 2d array
+  # dump a 2d array. I left off the _2d so this would match the grid classes.
   def dump
     must_be_2d!
 
@@ -181,15 +172,8 @@ class Array
   end
 
   # is this point in the array?
-  def includes_pt?(r, c)
+  def includes_2d?(r, c)
     r >= 0 && r < rows && c >= 0 && c < cols
-  end
-
-  # verify points are in the right order and in range.
-  def includes_range!(r1, c1, r2, c2)
-    if !includes_pt?(r1, c1) || !includes_pt?(r2, c2) || r1 > r2 || c1 > c2
-      raise ArgumentError, "out of bounds, 0 < #{r1} < #{r2} < #{rows} and 0 < #{c1} < #{c2} < #{cols}"
-    end
   end
 
   #

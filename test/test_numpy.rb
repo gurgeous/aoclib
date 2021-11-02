@@ -33,10 +33,10 @@ class TestNumpy < MiniTest::Test
     assert_equal([[2, 1], [4, 3]], x.fliplr)
   end
 
-  def test_full
+  def test_fill
     x = Array.zeros(4, 4)
-    x.full(0, 0, 3, 3, 2)
-    x.full(1, 1, 2, 2, 5)
+    x.fill(0, 0, 3, 3, 2)
+    x.fill(1, 1, 2, 2, 5)
     assert_equal(x, [[2, 2, 2, 2], [2, 5, 5, 2], [2, 5, 5, 2], [2, 2, 2, 2]])
   end
 

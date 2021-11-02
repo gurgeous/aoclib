@@ -76,7 +76,7 @@ class Array
   end
 
   # set the passed value to all cells in the specified region
-  def full(r1, c1, r2, c2, value)
+  def fill(r1, c1, r2, c2, value)
     valid_range!(r1, c1, r2, c2)
     r1.upto(r2) { |r| c1.upto(c2) { |c| self[r][c] = value } }
 

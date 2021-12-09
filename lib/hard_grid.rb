@@ -23,22 +23,22 @@ class HardGrid
 
   # get value
   def [](pt)
-    raise IndexError, "out of bounds #{pt}" if !includes?(pt)
+    raise IndexError, "out of bounds #{pt}" if !include?(pt)
 
     @hash[pt.to_a]
   end
 
   # set value
   def []=(pt, value)
-    raise IndexError, "out of bounds #{pt}" if !includes?(pt)
+    raise IndexError, "out of bounds #{pt}" if !include?(pt)
 
     @hash[pt.to_a] = value
   end
 
   # is this point in the grid?
-  def includes?(pt)
+  def include?(pt)
     r, c = *pt.to_a
-    r >= 0 && r < @rows && c >= 0 || c < @cols
+    r >= 0 && r < @rows && c >= 0 && c < @cols
   end
 
   # how big are we?
@@ -84,7 +84,7 @@ class HardGrid
     queue, seen = [initial], Set.new([initial])
     while (pt = queue.shift) && (pt != goal)
       pt.neighbors4.each do |nxt|
-        next if !includes?(nxt) || self[nxt] == '#' || seen.include?(nxt)
+        next if !include?(nxt) || self[nxt] == '#' || seen.include?(nxt)
 
         seen << nxt
         queue << nxt

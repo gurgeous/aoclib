@@ -133,7 +133,7 @@ class Array
   def each_region_2d(r1, c1, r2, c2, &block)
     must_be_2d!
 
-    if !includes_2d?(r1, c1) || !includes_2d?(r2, c2) || r1 > r2 || c1 > c2
+    if !include_2d?(r1, c1) || !include_2d?(r2, c2) || r1 > r2 || c1 > c2
       raise ArgumentError, "out of bounds, 0 < #{r1} < #{r2} < #{rows} and 0 < #{c1} < #{c2} < #{cols}"
     end
 
@@ -172,7 +172,7 @@ class Array
   end
 
   # is this point in the array?
-  def includes_2d?(r, c)
+  def include_2d?(r, c)
     r >= 0 && r < rows && c >= 0 && c < cols
   end
 

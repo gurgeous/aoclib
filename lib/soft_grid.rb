@@ -27,6 +27,11 @@ class SoftGrid
     end
   end
 
+  # dup
+  def initialize_dup(other)
+    @hash = other.hash.dup
+  end
+
   #
   # accessors
   #

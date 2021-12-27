@@ -17,6 +17,11 @@ class HardGrid
     @hash, @rows, @cols = Hash.new(default), rows, cols
   end
 
+  # dup
+  def initialize_dup(other)
+    @hash, @rows, @cols = other.hash, other.rows, other.cols
+  end
+
   #
   # accessors
   #

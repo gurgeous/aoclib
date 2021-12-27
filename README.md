@@ -144,6 +144,11 @@ EOF
 
 ## Changelog
 
+#### 0.0.2 (master)
+
+- added `Numeric#sign` (1, -1 or 0)
+- added `dup` to grid classes
+
 #### 0.0.1 - Nov 2021
 
-- Original release
+- original release

@@ -38,6 +38,9 @@ class TestCoreExt < Minitest::Test
     assert([2, 2, 2].identical?)
     assert(![2, 2, 3].identical?)
     assert_equal(6, [1, 2, 3].multiply)
+    assert_equal(1, 123.sign)
+    assert_equal(-1, -123.sign)
+    assert_equal(0, 0.sign)
   end
 
   def test_hash

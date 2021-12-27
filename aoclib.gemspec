@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name = 'aoclib'
-  s.version = '0.0.1'
+  s.version = '0.0.2'
   s.authors = ['Adam Doppelt']
   s.email = 'amd@gurge.com'
 

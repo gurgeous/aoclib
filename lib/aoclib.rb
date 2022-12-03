@@ -2,13 +2,13 @@
 # load our stuff
 #
 
-require_relative 'core_ext'
-require_relative 'deque'
-require_relative 'hard_grid'
-require_relative 'point'
-require_relative 'point3'
-require_relative 'priority_queue'
-require_relative 'soft_grid'
+require_relative "core_ext"
+require_relative "deque"
+require_relative "hard_grid"
+require_relative "point"
+require_relative "point3"
+require_relative "priority_queue"
+require_relative "soft_grid"
 
 #
 # TODO
@@ -21,10 +21,10 @@ require_relative 'soft_grid'
 #
 
 # uppercase alphabet, as array
-ALPHABET = ('A'..'Z').to_a.freeze
+ALPHABET = ("A".."Z").to_a.freeze
 
 # lowercase alphabet, as array
-ALPHABET_LOWER = ('a'..'z').to_a.freeze
+ALPHABET_LOWER = ("a".."z").to_a.freeze
 
 # digits, as array
 DIGITS = (0..9).to_a.freeze
@@ -62,7 +62,7 @@ end
 def banner(s)
   green, reset = "\e[1;37;42m", "\e[0m"
 
-  s = "#{s} ".ljust(72, ' ')
-  $stdout.write "#{green}[#{Time.new.strftime('%H:%M:%S')}] #{s}#{reset}\n"
+  s = "#{s} ".ljust(72, " ")
+  $stdout.write "#{green}[#{Time.new.strftime("%H:%M:%S")}] #{s}#{reset}\n"
   $stdout.flush
 end

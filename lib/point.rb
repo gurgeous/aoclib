@@ -52,7 +52,7 @@ class Point
   def last
     y
   end
-  alias second last
+  alias_method :second, :last
 
   #
   # math
@@ -118,10 +118,10 @@ class Point
   end
 
   # aliases for directions
-  alias up n
-  alias right e
-  alias down s
-  alias left w
+  alias_method :up, :n
+  alias_method :right, :e
+  alias_method :down, :s
+  alias_method :left, :w
 
   # return NESWE points
   def neighbors4
@@ -158,7 +158,7 @@ class Point
   def eql?(other)
     instance_of?(other.class) && (self <=> other) == 0
   end
-  alias == eql?
+  alias_method :==, :eql?
 
   def <(other)
     (self <=> other) == -1

@@ -74,8 +74,8 @@ class Deque
     end
     self
   end
-  alias append push
-  alias << push
+  alias_method :append, :push
+  alias_method :<<, :push
 
   # pop last value
   def pop
@@ -186,7 +186,7 @@ class Deque
   end
 
   # join values into a string
-  def join(separator = '')
+  def join(separator = "")
     to_a.join(separator)
   end
 
@@ -223,7 +223,7 @@ class Deque
     to_a.to_s
   end
 
-  alias size length
+  alias_method :size, :length
 
   Node = Struct.new(:value, :prev, :next) do
     def to_s

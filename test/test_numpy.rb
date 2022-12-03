@@ -1,4 +1,4 @@
-require_relative 'test_helper'
+require_relative "test_helper"
 
 class TestNumpy < MiniTest::Test
   def test_concatenate_2d

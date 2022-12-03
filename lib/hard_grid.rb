@@ -1,4 +1,4 @@
-require 'forwardable'
+require "forwardable"
 
 # Grid of fixed size. Keys are always row major, of the form (r, c). Uses a hash
 # for storage.
@@ -10,10 +10,10 @@ class HardGrid
   %i[count each empty? key key? keys values].each do
     def_delegator :@hash, _1
   end
-  alias find key
+  alias_method :find, :key
 
   # Create a new grid of fixed size.
-  def initialize(rows, cols, default: ' ')
+  def initialize(rows, cols, default: " ")
     @hash, @rows, @cols = Hash.new(default), rows, cols
   end
 
@@ -89,7 +89,7 @@ class HardGrid
     queue, seen = [initial], Set.new([initial])
     while (pt = queue.shift) && (pt != goal)
       pt.neighbors4.each do |nxt|
-        next if !include?(nxt) || self[nxt] == '#' || seen.include?(nxt)
+        next if !include?(nxt) || self[nxt] == "#" || seen.include?(nxt)
 
         seen << nxt
         queue << nxt
@@ -100,7 +100,7 @@ class HardGrid
 
   # what is the shortest path between these two points?
   def shortest_path(initial, goal)
-    parent = { initial => nil }
+    parent = {initial => nil}
     bfs(initial, goal) { parent[_2] = _1 }
     return if !parent.key?(goal)
 
@@ -112,7 +112,7 @@ class HardGrid
 
   # what is the length of the shortest path between these two points?
   def shortest_path_length(initial, goal)
-    cost_so_far = { initial => 0 }
+    cost_so_far = {initial => 0}
     bfs(initial, goal) { cost_so_far[_2] = cost_so_far[_1] + 1 }
     cost_so_far[goal]
   end
@@ -122,10 +122,10 @@ class HardGrid
   #
 
   def dump(header: false)
-    return '<Grid empty>' if empty?
+    return "<Grid empty>" if empty?
 
     if rows > 1000 || cols > 1000
-      raise 'too large to dump'
+      raise "too large to dump"
     end
 
     if header
@@ -135,9 +135,9 @@ class HardGrid
 
     row_range.each do |r|
       s = []
-      s += [r.tens, r.ones, ' '] if header
+      s += [r.tens, r.ones, " "] if header
       s += col_range.map { |c| self[[r, c]] }
-      s += [' ', r.tens, r.ones] if header
+      s += [" ", r.tens, r.ones] if header
       puts(s.join)
     end
 
@@ -154,14 +154,14 @@ class HardGrid
   #
 
   # create a grid from a string, AOC-style
-  def self.from_string(str, default: ' ')
+  def self.from_string(str, default: " ")
     # strip newlines from front and end
-    str = str.gsub(/\A\n+|\n+\z/, '')
+    str = str.gsub(/\A\n+|\n+\z/, "")
 
     # sanity check
     lines = str.split("\n")
     if !lines.map(&:length).identical?
-      raise 'rows are not all the same length'
+      raise "rows are not all the same length"
     end
 
     rows, cols = lines.length, lines.first.length

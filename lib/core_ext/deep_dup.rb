@@ -1,5 +1,5 @@
-require 'ostruct'
-require 'set'
+require "ostruct"
+require "set"
 
 #
 # Make deep dups of objects. Not all types are supported, but should be enough

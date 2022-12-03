@@ -1,4 +1,4 @@
-require_relative 'test_helper'
+require_relative "test_helper"
 
 class TestAoclib < Minitest::Test
   def test_globals
@@ -10,6 +10,6 @@ class TestAoclib < Minitest::Test
   end
 
   def test_banner
-    assert_output(/gub/) { banner('gub') }
+    assert_output(/gub/) { banner("gub") }
   end
 end

@@ -1,4 +1,4 @@
-require_relative 'test_helper'
+require_relative "test_helper"
 
 class TestCoreExt < Minitest::Test
   def test_array
@@ -44,9 +44,9 @@ class TestCoreExt < Minitest::Test
   end
 
   def test_hash
-    assert_equal({ a: 2, b: 2 }, { b: 2, a: 2 }.sort_by_key)
-    assert_equal({ a: 1, b: 2 }, { b: 2, a: 1 }.sort_by_value)
-    assert_equal({ a: 1, b: 2 }, { b: 2, a: 1 }.reverse)
+    assert_equal({a: 2, b: 2}, {b: 2, a: 2}.sort_by_key)
+    assert_equal({a: 1, b: 2}, {b: 2, a: 1}.sort_by_value)
+    assert_equal({a: 1, b: 2}, {b: 2, a: 1}.reverse)
   end
 
   def test_integer
@@ -68,8 +68,8 @@ class TestCoreExt < Minitest::Test
   end
 
   def test_object
-    assert('bub'.palindrome?)
-    assert(!'xbub'.palindrome?)
+    assert("bub".palindrome?)
+    assert(!"xbub".palindrome?)
   end
 
   def test_range
@@ -78,8 +78,8 @@ class TestCoreExt < Minitest::Test
   end
 
   def test_string
-    assert_equal([-123.5, 456], 'hi -123.5 there 456'.floats)
-    assert_equal([-123, 456], 'hi -123 there 456'.ints)
-    assert_equal('ba73632f801ac2c72d78134722f2cb84', 'gub'.md5)
+    assert_equal([-123.5, 456], "hi -123.5 there 456".floats)
+    assert_equal([-123, 456], "hi -123 there 456".ints)
+    assert_equal("ba73632f801ac2c72d78134722f2cb84", "gub".md5)
   end
 end

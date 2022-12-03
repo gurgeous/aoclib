@@ -1,4 +1,4 @@
-require 'prime'
+require "prime"
 
 class Integer
   # find prime factors of a number

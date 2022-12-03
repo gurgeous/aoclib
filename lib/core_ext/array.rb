@@ -71,10 +71,10 @@ class Array
   end
 
   # directional aliases for NESW
-  alias up n
-  alias right e
-  alias down s
-  alias left w
+  alias_method :up, :n
+  alias_method :right, :e
+  alias_method :down, :s
+  alias_method :left, :w
 
   # NESW neighors
   def neighbors4

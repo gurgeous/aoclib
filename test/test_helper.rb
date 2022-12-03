@@ -1,2 +1,2 @@
-require 'aoclib'
-require 'minitest/autorun'
+require "aoclib"
+require "minitest/autorun"

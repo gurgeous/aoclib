@@ -65,7 +65,7 @@ class Array
   def roll_2d(shift, axis: 0)
     must_be_2d!
     if axis != 0 && axis != 1
-      raise ArgumentError, 'axis must be 0 or 1'
+      raise ArgumentError, "axis must be 0 or 1"
     end
 
     if axis == 0
@@ -151,12 +151,12 @@ class Array
     widths = transpose.map { |col| col.map { _1.inspect.length }.max }
     each.with_index do |row, ii|
       s = []
-      s << (ii == 0 ? '[[' : ' [')
+      s << ((ii == 0) ? "[[" : " [")
       row.each.with_index do
         s << _1.inspect.rjust(widths[_2])
-        s << ', ' if _2 != row.length - 1
+        s << ", " if _2 != row.length - 1
       end
-      s << (ii == length - 1 ? ']]' : '],')
+      s << ((ii == length - 1) ? "]]" : "],")
       puts(s.join)
     end
     nil
@@ -168,7 +168,7 @@ class Array
 
   # raise if not 2d
   def must_be_2d!
-    raise 'not a 2d array' if !first.is_a?(Array)
+    raise "not a 2d array" if !first.is_a?(Array)
   end
 
   # is this point in the array?
@@ -205,7 +205,7 @@ class Array
   def self.concatenate_2d(x, y, axis: 0)
     xs, ys = x.shape, y.shape
     if axis != 0 && axis != 1
-      raise ArgumentError, 'axis must be 0 or 1'
+      raise ArgumentError, "axis must be 0 or 1"
     end
     if xs[1 - axis] != ys[1 - axis]
       raise ArgumentError, "shapes not compatible (#{xs[1 - axis]} != #{ys[1 - axis]})"

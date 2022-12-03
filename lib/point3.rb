@@ -57,7 +57,7 @@ class Point3
   def last
     z
   end
-  alias third last
+  alias_method :third, :last
 
   #
   # math
@@ -139,7 +139,7 @@ class Point3
   def eql?(other)
     instance_of?(other.class) && (self <=> other) == 0
   end
-  alias == eql?
+  alias_method :==, :eql?
 
   def <(other)
     (self <=> other) == -1

@@ -146,6 +146,7 @@ EOF
 
 #### 0.0.2 (master)
 
+- Ruby 3.1, ruby-lsp, standardrb
 - added `Numeric#sign` (1, -1 or 0)
 - added `dup` to grid classes
 

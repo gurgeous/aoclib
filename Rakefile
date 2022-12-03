@@ -1,8 +1,8 @@
-require 'bundler/setup'
-require 'rake/testtask'
+require "bundler/setup"
+require "rake/testtask"
 
 # load the spec, we use it below
-spec = Gem::Specification.load('aoclib.gemspec')
+spec = Gem::Specification.load("aoclib.gemspec")
 
 #
 # testing
@@ -27,7 +27,7 @@ end
 #
 
 task :pry do
-  sh 'pry -I lib -r aoclib.rb'
+  sh "pry -I lib -r aoclib.rb"
 end
 
 #
@@ -35,7 +35,7 @@ end
 #
 
 task :rubocop do
-  sh 'bundle exec rubocop -A .'
+  sh "bundle exec rubocop -A ."
 end
 
 #
@@ -43,7 +43,7 @@ end
 #
 
 task :build do
-  sh 'gem build --quiet aoclib.gemspec'
+  sh "gem build --quiet aoclib.gemspec"
 end
 
 task install: :build do
@@ -54,6 +54,6 @@ task release: %i[rubocop test build] do
   raise "looks like git isn't clean" unless `git status --porcelain`.empty?
 
   sh "git tag -a #{spec.version} -m 'Tagging #{spec.version}'"
-  sh 'git push --tags'
+  sh "git push --tags"
   sh "gem push aoclib-#{spec.version}.gem"
 end

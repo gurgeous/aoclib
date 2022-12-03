@@ -1,4 +1,4 @@
-require 'forwardable'
+require "forwardable"
 
 # A simple sorted queue. Typically used for A* searching. Elements are inserted
 # into the underyling array using bsearch_index and each element must respond to
@@ -20,7 +20,7 @@ class PriorityQueue
     ii = @array.bsearch_index { _1 > value }
     @array.insert(ii || @array.length, value)
   end
-  alias << push
+  alias_method :<<, :push
 
   def inspect
     "<PriorityQueue: #{@array.length} items>"
